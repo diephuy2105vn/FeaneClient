@@ -132,7 +132,7 @@ const promotionSliderSettings = {
 
 const HomePage = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
-    const [shops] = useState([
+    const shops = [
         {
             name: "Fashion Shop",
             avatar: "https://invietnhat.vn/wp-content/uploads/2023/08/logo-shop-thoi-trang-nu-6.jpg",
@@ -238,7 +238,7 @@ const HomePage = () => {
             avatar: "https://invietnhat.vn/wp-content/uploads/2023/08/logo-shop-thoi-trang-nu-6.jpg",
             description: "Shop 1 nè ",
         },
-    ]);
+    ];
 
     useEffect(() => {
         instance

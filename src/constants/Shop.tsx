@@ -6,6 +6,6 @@ export type ShopType = {
     description: string;
     address: string;
     productTypes: EProduct[];
-    owner: UserType;
+    owner: UserType | null;
     createdAt: string;
 };

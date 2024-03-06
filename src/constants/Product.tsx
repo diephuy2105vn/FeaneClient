@@ -16,7 +16,7 @@ export type ProductType = {
     description: string;
     price: string;
     quantity: string;
-    type: EProduct;
+    type: EProduct | null;
     sold: number;
     note: string;
     images: string[];

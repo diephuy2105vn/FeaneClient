@@ -75,6 +75,8 @@ const ShopRegister = () => {
         description: "",
         address: "Trần Đề, Sóc Trăng",
         productTypes: [],
+        owner: null,
+        createdAt: "",
     });
     const [isError, setIsError] = useState<boolean>(false);
     const [provinceSelect, setProvinceSelect] = useState<string>("");
