@@ -208,44 +208,53 @@ const OneProduct = () => {
                             }}
                             src="https://invietnhat.vn/wp-content/uploads/2023/08/logo-shop-thoi-trang-nu-6.jpg"
                         />
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                gap: "8px",
-                            }}>
-                            <h3 style={{ fontSize: "16px", fontWeight: 600 }}>
-                                {product.shop.name}
-                            </h3>
+                        {product.shop && (
                             <Box
                                 sx={{
                                     display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "center",
                                     gap: "8px",
                                 }}>
-                                <Button
-                                    size="small"
-                                    variant="outlined"
-                                    component={Link}
-                                    to={`/shop/${product.shop.id}`}
-                                    startIcon={<Store />}>
-                                    View Shop
-                                </Button>
-                                <Button
-                                    size="small"
-                                    variant="outlined"
-                                    component={Link}
-                                    to={`/chat?username=${product.shop.owner.username}`}
-                                    startIcon={<Chat />}
-                                    disabled={
-                                        (userState &&
-                                            product.shop.owner.username ===
-                                                userState.username)!
-                                    }>
-                                    Chat now
-                                </Button>
+                                <h3
+                                    style={{
+                                        fontSize: "16px",
+                                        fontWeight: 600,
+                                    }}>
+                                    {product.shop.name}
+                                </h3>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        gap: "8px",
+                                    }}>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        component={Link}
+                                        to={`/shop/${product.shop.id}`}
+                                        startIcon={<Store />}>
+                                        View Shop
+                                    </Button>
+                                    {product.shop.owner && (
+                                        <Button
+                                            size="small"
+                                            variant="outlined"
+                                            component={Link}
+                                            to={`/chat?username=${product.shop.owner.username}`}
+                                            startIcon={<Chat />}
+                                            disabled={
+                                                (userState &&
+                                                    product.shop.owner
+                                                        .username ===
+                                                        userState.username)!
+                                            }>
+                                            Chat now
+                                        </Button>
+                                    )}
+                                </Box>
                             </Box>
-                        </Box>
+                        )}
                     </Box>
                 </Box>
             </Box>
