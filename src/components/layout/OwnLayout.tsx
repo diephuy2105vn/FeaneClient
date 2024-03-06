@@ -356,7 +356,7 @@ const OwnLayout = ({ children }: LayoutProps) => {
                                 px: 2.5,
                             }}
                             component={Link}
-                            to="/shop/register">
+                            to="/own/shop/register">
                             <ListItemIcon
                                 sx={{
                                     minWidth: 0,
