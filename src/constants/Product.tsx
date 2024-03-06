@@ -17,8 +17,8 @@ export type ProductType = {
     price: string;
     quantity: string;
     type: EProduct | null;
-    sold: number;
+    sold?: number;
     note: string;
     images: string[];
-    shop: ShopType;
+    shop?: ShopType | null;
 };

@@ -57,6 +57,8 @@ const ShopEditProduct = () => {
         type: null,
         note: "",
         images: [],
+        sold: 0,
+        shop: null,
     });
     const { shopActive } = useContext(ShopContext);
     const { productId } = useParams();
