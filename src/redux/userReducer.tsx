@@ -13,6 +13,7 @@ export interface UserType {
     phoneNumber?: string;
     avatar: string;
     roles?: Array<string>;
+    refreshToken?: string;
     accessToken?: string;
     shops?: Array<ShopType>;
 }
@@ -33,12 +34,14 @@ const userSlice = createSlice({
         userLogin: (state, action: PayloadAction<UserType>) => {
             const cookies = new Cookies();
             cookies.set("accessToken", action.payload.accessToken);
+            cookies.set("refreshToken", action.payload.refreshToken);
             state.user = action.payload;
             state.loading = false;
         },
         userLogout: (state) => {
             const cookies = new Cookies();
             cookies.remove("accessToken");
+            cookies.remove("refreshToken");
             state.user = null;
             state.loading = false;
         },
