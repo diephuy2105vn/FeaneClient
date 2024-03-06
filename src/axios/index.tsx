@@ -2,7 +2,8 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 
 const instance = axios.create({
-    baseURL: "http://localhost:8080/api/",
+    withCredentials: true,
+    baseURL: "http://feane-client.vercel.app/api/",
 });
 
 instance.interceptors.request.use(
