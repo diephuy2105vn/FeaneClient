@@ -161,7 +161,7 @@ const UserHeader = () => {
                                 variant="contained"
                                 startIcon={<AppRegistration />}
                                 component={Link}
-                                to="/shop/register">
+                                to="/own/shop/register">
                                 Register Shop
                             </Button>
                         )}
