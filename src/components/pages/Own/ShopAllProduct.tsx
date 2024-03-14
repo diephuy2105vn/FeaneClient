@@ -78,7 +78,7 @@ const SIZE_PAGE = 12;
 const ShopAllProduct = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const { shopActive } = useContext(ShopContext);
-    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const [selectChecked, setSelectChecked] = React.useState<{
         sort: string;
