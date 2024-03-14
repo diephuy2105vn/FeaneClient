@@ -26,7 +26,6 @@ import { ShopContext } from "../../layout/OwnLayout";
 import { Search } from "@mui/icons-material";
 import useTextFormatting from "../../../hooks/useFormatText";
 import Title from "../../Title";
-import { current } from "@reduxjs/toolkit";
 
 const ProductContainer = styled.div`
     margin: 0;
