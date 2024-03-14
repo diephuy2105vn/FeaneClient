@@ -65,33 +65,45 @@ const SliderPromotion = styled(Slider)`
 
 const ProductContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
+    grid-template-columns:
+        calc(100% / 6) calc(100% / 6) calc(100% / 6)
+        calc(100% / 6) calc(100% / 6) calc(100% / 6);
     overflow: hidden;
+    grid-gap: 8px;
     &.Product-trending {
-        grid-template-rows: auto;
-        @media (max-width: 900px) {
-            grid-template-rows: auto auto;
-        }
+        max-height: 444px;
     }
     @media (max-width: 900px) {
-        grid-template-columns: auto auto auto auto;
+        grid-template-columns:
+            calc(100% / 4) calc(100% / 4)
+            calc(100% / 4) calc(100% / 4);
+        &.Product-trending {
+            max-height: 360px;
+        }
     }
     @media (max-width: 600px) {
-        grid-template-columns: auto auto auto;
+        grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
+        grid-auto-rows: minmax(100px, auto);
+        &.Product-trending {
+            max-height: 300px;
+        }
     }
 `;
 
 const PromotionContainer = styled.div`
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: 25% 25% 25% 25%;
     overflow: hidden;
+    grid-gap: 8px;
+    max-height: 444px;
     @media (max-width: 900px) {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 50% 50%;
+        max-height: 360px;
     }
     @media (max-width: 600px) {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 100%;
+        max-height: 300px;
     }
 `;
 
@@ -135,6 +147,7 @@ const SIZE_PAGE = 12;
 
 const HomePage = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
+    const [productTrends, setProductTrends] = useState<ProductType[]>([]);
     const [curentPage, setCurentPage] = useState<number>(1);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const shops = [
@@ -253,6 +266,13 @@ const HomePage = () => {
             }
             setProducts((pre) => [...pre, res.data.list]);
         });
+        instance.get(`/public/product/all?size=12`).then((res) => {
+            if (curentPage === 1) {
+                setTotalProduct(res.data.total);
+                return setProductTrends(res.data.list);
+            }
+            setProducts((pre) => [...pre, res.data.list]);
+        });
     }, []);
 
     return (
@@ -352,7 +372,7 @@ const HomePage = () => {
                     </span>
                 </Box>
                 <ProductContainer className="Product-trending">
-                    {products.map((product) => (
+                    {productTrends.map((product) => (
                         <CardProduct
                             component={Link}
                             to={`/product/${product.id}`}
