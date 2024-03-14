@@ -2,10 +2,10 @@ import { ProductType } from "./Product";
 import { ShopType } from "./Shop";
 
 export type CartDetailType = {
-    id: number;
+    id?: number;
     product: ProductType;
     quantity: number;
-    createdAt: string;
+    createdAt?: string;
 };
 
 export type ShopCartType = {

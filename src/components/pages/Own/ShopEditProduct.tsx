@@ -71,7 +71,7 @@ const ShopEditProduct = () => {
             })
             .catch((err) => {
                 console.log(err);
-                navigate(`/shop/${shopActive?.name}/product/all`);
+                navigate(`/own/shop/${shopActive?.name}/product/all`);
             });
     }, [productId]);
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

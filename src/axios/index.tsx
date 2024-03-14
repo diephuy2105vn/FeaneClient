@@ -3,11 +3,11 @@ import { Cookies } from "react-cookie";
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: "https://feaneserver-production.up.railway.app/api/",
+    baseURL: "http://localhost:8080/api/",
 });
 
 instance.interceptors.request.use(
-    function (config) {
+    (config) => {
         const cookies = new Cookies();
         const refreshToken = cookies.get("refreshToken");
 
@@ -16,7 +16,7 @@ instance.interceptors.request.use(
         }
         return config;
     },
-    function (error) {
+    (error) => {
         return Promise.reject(error);
     }
 );

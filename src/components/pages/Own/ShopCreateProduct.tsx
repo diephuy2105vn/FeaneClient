@@ -96,7 +96,7 @@ const ShopCreateProduct = () => {
             .post(`/own/${shopActive?.name}/product`, formData)
             .then((res) => {
                 if (res.data.status === EMessage.SUCCESS) {
-                    navigate(`/shop/${shopActive?.name}/product/all`);
+                    navigate(`/own/shop/${shopActive?.name}/product/all`);
                 }
             })
             .catch((err) => {

@@ -73,9 +73,13 @@ const sorts = [
     { value: "PRICE_DESC", title: "Price desc" },
 ];
 
+const SIZE_PAGE = 12;
+
 const ShopAllProduct = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const { shopActive } = useContext(ShopContext);
+    const [curentPage, setCurentPage] = useState<number>(1);
+    const [totalProduct, setTotalProduct] = useState<number>(0);
     const [selectChecked, setSelectChecked] = React.useState<{
         sort: string;
         types: string[];
@@ -112,7 +116,10 @@ const ShopAllProduct = () => {
             .get(
                 `/own/${shopActive?.name}/product/all?types=${selectChecked.types}&&sort=${selectChecked.sort}`
             )
-            .then((res) => setProducts(res.data))
+            .then((res) => {
+                setTotalProduct(res.data.total);
+                setProducts(res.data.list);
+            })
             .catch((err) => {
                 console.log(err);
             });
@@ -340,31 +347,12 @@ const ShopAllProduct = () => {
                             }}
                         />
                     ))}
-                    {products.map((product: ProductType, index: number) => (
-                        <CardProduct
-                            key={index}
-                            product={product}
-                            isSetting={true}
-                            handleClickDeleteCard={() => {
-                                instance
-                                    .delete(
-                                        `/own/${shopActive?.name}/product/${product.id}`
-                                    )
-                                    .then(() => {
-                                        setProducts((pre) =>
-                                            pre.filter(
-                                                (productPre) =>
-                                                    productPre.id !== product.id
-                                            )
-                                        );
-                                    })
-                                    .catch((err) => {
-                                        console.log(err);
-                                    });
-                            }}
-                        />
-                    ))}
                 </ProductContainer>
+                {curentPage * SIZE_PAGE < totalProduct && (
+                    <Button onClick={() => setCurentPage((pre) => ++pre)}>
+                        View More
+                    </Button>
+                )}
             </Box>
         </StyledContainer>
     );

@@ -115,7 +115,7 @@ const ShopRegister = () => {
                             pre ? [...pre, shopInfo] : null
                         );
                         setShopActive(shopInfo);
-                        navigate(`/shop/${shopInfo.name}/overview`);
+                        navigate(`/own/shop/${shopInfo.name}/overview`);
                     }
                 })
                 .catch((e) => console.error(e));

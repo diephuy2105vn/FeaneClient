@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import ShopRegister from "./ShopRegister";
 import ShopOverview from "./ShopOverview";
 import ShopAllProduct from "./ShopAllProduct";
-import ShopSetting from "./ShopSetting";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -12,6 +11,7 @@ import ShopCreateProduct from "./ShopCreateProduct";
 import ShopEditProduct from "./ShopEditProduct";
 import ShopOrder from "./ShopOrder";
 import OneProduct from "../OneProduct";
+import ShopDiagram from "./ShopDiagram";
 const shopRouters = [
     {
         path: "/register",
@@ -34,16 +34,16 @@ const shopRouters = [
         component: <ShopOrder />,
     },
     {
+        path: "/:shopName/diagram",
+        component: <ShopDiagram />,
+    },
+    {
         path: "/:shopName/product/:productId",
         component: <OneProduct />,
     },
     {
         path: "/:shopName/product/:productId/edit",
         component: <ShopEditProduct />,
-    },
-    {
-        path: "/:shopName/setting",
-        component: <ShopSetting />,
     },
 ];
 

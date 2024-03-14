@@ -215,6 +215,9 @@ const StyledCardProduct = styled.div`
     position: relative;
     transition: 0.3s all linear;
     border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     .CardProduct_thumbnail {
         flex: 1;
         position: relative;
@@ -319,7 +322,7 @@ export const CardProduct = ({
     isSetting = false,
 }: CardProductProps) => {
     let Component: ElementType = "div";
-    if (component) {
+    if (component && !isSetting) {
         Component = component;
     }
     const { convertPriceFormat } = useTextFormatting();
@@ -339,7 +342,14 @@ export const CardProduct = ({
                     )}
                 </div>
                 <div className="CardProduct_info">
-                    <h3 className="CardProduct_name">{product.name}</h3>
+                    {isSetting && to ? (
+                        <Link to={to}>
+                            <h3 className="CardProduct_name">{product.name}</h3>
+                        </Link>
+                    ) : (
+                        <h3 className="CardProduct_name">{product.name}</h3>
+                    )}
+
                     <div>
                         <span className="CardProduct_price">
                             {convertPriceFormat(product.price)}

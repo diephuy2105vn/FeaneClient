@@ -28,9 +28,11 @@ const OrderPage = () => {
         const orderDetailsString: string | null = localStorage.getItem("order");
 
         if (orderDetailsString) {
+            const orderParse = JSON.parse(orderDetailsString);
             setOrder((pre) => ({
                 ...pre,
-                details: JSON.parse(orderDetailsString),
+                details: orderParse.orderDetails,
+                orderByCart: orderParse.orderByCart,
             }));
         }
     }, []);
@@ -47,6 +49,7 @@ const OrderPage = () => {
                     quantity: detail.quantity,
                 })),
             })),
+            orderByCart: order.orderByCart,
         };
         instance
             .post("/public/order", orderReq)

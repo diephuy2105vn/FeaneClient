@@ -1,12 +1,12 @@
 import Banner from "../Banner";
 import { CardProduct } from "../Card";
 import styled from "styled-components";
-import { Box, Container } from "@mui/material";
+import { Box, Button, Container } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ProductType } from "../../constants/Product";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
-import { GppGood, Moped, Restore } from "@mui/icons-material";
+import { ArrowDropDown, GppGood, Moped, Restore } from "@mui/icons-material";
 import instance from "../../axios";
 
 const StyledCardShop = styled.div`
@@ -65,32 +65,41 @@ const SliderPromotion = styled(Slider)`
 
 const ProductContainer = styled.div`
     display: grid;
-    grid-template-columns: auto auto auto auto auto auto;
+    grid-template-columns:
+        calc(100% / 6) calc(100% / 6) calc(100% / 6)
+        calc(100% / 6) calc(100% / 6) calc(100% / 6);
+    grid-template-rows: auto;
+    grid-auto-rows: 0;
     overflow: hidden;
     &.Product-trending {
-        grid-template-rows: auto auto;
-        grid-auto-rows: 0px;
+        grid-template-rows: auto;
     }
     @media (max-width: 900px) {
-        grid-template-columns: auto auto auto auto;
+        grid-template-columns:
+            calc(100% / 4) calc(100% / 4)
+            calc(100% / 4) calc(100% / 4);
+        grid-template-rows: auto auto;
+        grid-auto-rows: 0;
     }
     @media (max-width: 600px) {
-        grid-template-columns: auto auto auto;
+        grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
+        grid-template-rows: auto auto;
+        grid-auto-rows: 0;
     }
 `;
 
 const PromotionContainer = styled.div`
     flex: 1;
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: 25% 25% 25% 25%;
     grid-template-rows: auto auto;
-    grid-auto-rows: 0px;
+    grid-auto-rows: 0;
     overflow: hidden;
     @media (max-width: 900px) {
-        grid-template-columns: auto auto;
+        grid-template-columns: 50% 50%;
     }
     @media (max-width: 600px) {
-        grid-template-columns: auto;
+        grid-template-columns: 100%;
     }
 `;
 
@@ -130,8 +139,12 @@ const promotionSliderSettings = {
     slidesToScroll: 1,
 };
 
+const SIZE_PAGE = 12;
+
 const HomePage = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
+    const [curentPage, setCurentPage] = useState<number>(1);
+    const [totalProduct, setTotalProduct] = useState<number>(0);
     const shops = [
         {
             name: "Fashion Shop",
@@ -241,9 +254,13 @@ const HomePage = () => {
     ];
 
     useEffect(() => {
-        instance
-            .get("/public/product/all")
-            .then((res) => setProducts(res.data));
+        instance.get(`/public/product/all?page=${curentPage}`).then((res) => {
+            if (curentPage === 1) {
+                setTotalProduct(res.data.total);
+                return setProducts(res.data.list);
+            }
+            setProducts((pre) => [...pre, res.data.list]);
+        });
     }, []);
 
     return (
@@ -454,7 +471,7 @@ const HomePage = () => {
                             paddingRight: "10px",
                             lineHeight: 1.4,
                         }}>
-                        TRENDING PRODUCTS
+                        ALL PRODUCTS
                     </h3>
                     <span>
                         <Restore
@@ -468,15 +485,26 @@ const HomePage = () => {
                         Return within 1 week
                     </span>
                 </Box>
-                <ProductContainer>
-                    {products.map((product) => (
-                        <CardProduct
-                            component={Link}
-                            to={`/product/${product.id}`}
-                            product={product}
-                        />
-                    ))}
-                </ProductContainer>
+                <Box>
+                    <ProductContainer>
+                        {products.map((product) => (
+                            <CardProduct
+                                component={Link}
+                                to={`/product/${product.id}`}
+                                product={product}
+                            />
+                        ))}
+                    </ProductContainer>
+                    {curentPage * SIZE_PAGE < totalProduct && (
+                        <Button
+                            fullWidth
+                            size="large"
+                            onClick={() => setCurentPage((pre) => ++pre)}
+                            startIcon={<ArrowDropDown />}>
+                            Show More
+                        </Button>
+                    )}
+                </Box>
             </Container>
         </>
     );

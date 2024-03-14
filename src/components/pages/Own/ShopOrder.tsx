@@ -296,7 +296,6 @@ const ShopOrder = () => {
                 `/own/${shopActive?.name}/order/all?sort=${selectChecked.sort}&&status=${selectChecked.status}`
             )
             .then((res) => {
-                console.log(res.data);
                 setOrders(res.data);
             });
     }, [selectChecked]);
@@ -363,8 +362,9 @@ const ShopOrder = () => {
                         <h3 style={{ fontSize: "16px", fontWeight: "600" }}>
                             Sort
                         </h3>
-                        {sorts.map((sort) => (
+                        {sorts.map((sort, index) => (
                             <ListItem
+                                key={index}
                                 sx={{
                                     margin: 0,
                                     padding: 0,

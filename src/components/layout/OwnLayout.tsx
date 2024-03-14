@@ -195,7 +195,7 @@ const OwnLayout = ({ children }: LayoutProps) => {
             {
                 title: "Diagram",
                 icon: AutoGraph,
-                to: `/own/shop/${shopActive?.name}/setting`,
+                to: `/own/shop/${shopActive?.name}/diagram`,
             },
             {
                 title: "Setting",
@@ -218,7 +218,7 @@ const OwnLayout = ({ children }: LayoutProps) => {
     };
 
     useEffect(() => {
-        if (userState) {
+        if (userState && userState.roles?.includes("ROLE_OWNER")) {
             instance.get("/own/shop/all").then((res) => {
                 if (res.data.length > 0) {
                     setShops(res.data);

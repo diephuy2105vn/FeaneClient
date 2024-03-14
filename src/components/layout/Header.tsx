@@ -12,6 +12,9 @@ import {
     Button,
     useTheme,
     useMediaQuery,
+    ListItem,
+    ClickAwayListener,
+    Hidden,
 } from "@mui/material";
 import {
     Search,
@@ -31,6 +34,8 @@ import { AppDispatch } from "../../redux";
 import { CartDetailType, ShopCartType } from "../../constants/Cart";
 import instance from "../../axios";
 import { CardCartDetail } from "../Card";
+import { ProductType } from "../../constants/Product";
+import useSetValueTimeout from "../../hooks/useSetValueTimeout";
 
 const Wrapper = styled.div`
     height: var(--header-height);
@@ -70,7 +75,7 @@ const Logo = styled.h1`
     font-size: 48px;
     user-select: none;
     @media (max-width: 600px) {
-        font-size: 32px;
+        font-size: 28px;
     }
 `;
 
@@ -94,25 +99,39 @@ const Navbar = styled.div`
     align-items: center;
 `;
 
-const StyledTextField = styled(TextField)`
-    flex: 1;
-    background-color: var(--white);
-    border-radius: 30px;
-    max-width: 360px;
-    & .MuiOutlinedInput-root {
-        fieldset {
-            border-radius: 30px;
-            border-color: transparent;
+const SearchBox = styled(Box)`
+    &&.MuiBox-root {
+        flex: 1;
+        max-width: 360px;
+        position: relative;
+    }
+    .MuiTextField-root {
+        width: 100%;
+        background-color: var(--white);
+        border-radius: 30px;
+        & .MuiOutlinedInput-root {
+            fieldset {
+                border-radius: 30px;
+                border-color: transparent;
+            }
+        }
+        .MuiInputLabel-root {
+            color: var(--primary);
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        .MuiInputBase-root {
+            color: var(--text-color);
+            font-size: 16px;
         }
     }
-    .MuiInputLabel-root {
-        color: var(--primary);
-        font-size: 16px;
-        opacity: 0.8;
-    }
-    .MuiInputBase-root {
-        color: var(--text-color);
-        font-size: 16px;
+    .SearchBox-result {
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        padding: 4px 0;
+        border-radius: 5px;
+        background-color: white;
     }
 `;
 
@@ -133,6 +152,7 @@ const StyledMenu = styled(MenuMui)`
 
 const Header = () => {
     const [valueSearch, setValueSearch] = useState("");
+    const [searchResult, setSearchResult] = useState<ProductType[]>([]);
     const [shopCarts, setShopCarts] = useState<ShopCartType[]>([]);
     const [anchorElMenuUser, setAnchorElMenuUser] =
         React.useState<null | HTMLElement>(null);
@@ -144,6 +164,7 @@ const Header = () => {
     const [checkedCartDetails, setCheckedCartDetails] = useState<
         ShopCartType[]
     >([]);
+    const valueSearchSend = useSetValueTimeout(valueSearch, 2000) as string;
     const handleClickIconUser = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElMenuUser(event.currentTarget);
     };
@@ -156,6 +177,7 @@ const Header = () => {
     const handleCloseMenuCart = () => {
         setAnchorElMenuCart(null);
     };
+
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up("sm"));
     const navigate = useNavigate();
@@ -211,6 +233,19 @@ const Header = () => {
                 });
         }
     }, [openMenuCart]);
+    const handleSearch = () => {
+        valueSearchSend.trim() &&
+            instance
+                .get(`/public/product/all?q=${valueSearchSend}&&size=8`)
+                .then((res) => {
+                    console.log(res.data);
+                    setSearchResult(res.data);
+                });
+    };
+    useEffect(() => {
+        handleSearch();
+    }, [valueSearchSend]);
+
     const handleToggleCheckedCartDetails = (
         shopCart: ShopCartType,
         detail: CartDetailType
@@ -267,24 +302,77 @@ const Header = () => {
                     <Link to="/">
                         <Logo>Feane</Logo>
                     </Link>
-                    <StyledTextField
-                        label={!valueSearch && "Enter search content"}
-                        variant="outlined"
-                        value={valueSearch}
-                        onChange={(e) => setValueSearch(e.target.value)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton>
-                                        <Search />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                        InputLabelProps={{
-                            shrink: false,
-                        }}
-                    />
+                    <ClickAwayListener onClickAway={() => setSearchResult([])}>
+                        <SearchBox>
+                            <TextField
+                                label={!valueSearch && "Enter search content"}
+                                variant="outlined"
+                                value={valueSearch}
+                                onChange={(e) => setValueSearch(e.target.value)}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleSearch}>
+                                                <Search />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                InputLabelProps={{
+                                    shrink: false,
+                                }}
+                            />
+                            {searchResult.length > 0 && (
+                                <Box className="SearchBox-result">
+                                    {searchResult.map((result, index) => (
+                                        <ListItem
+                                            key={index}
+                                            sx={{
+                                                padding: "2px 8px",
+                                                " & + &": {
+                                                    borderTop: "1px solid #ccc",
+                                                },
+                                            }}>
+                                            <img
+                                                width={45}
+                                                height={45}
+                                                src={result.images[0]}
+                                            />
+                                            <Box
+                                                sx={{
+                                                    marginLeft: "6px",
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    alignItems: "start",
+                                                    gap: "2px",
+                                                }}>
+                                                <p
+                                                    style={{
+                                                        fontSize: "12px",
+                                                        fontWeight: 500,
+                                                    }}>
+                                                    {result.name}
+                                                </p>
+                                                <span
+                                                    style={{
+                                                        fontSize: "12px",
+                                                        fontWeight: 500,
+                                                        padding: "2px 5px",
+                                                        borderRadius: "10px",
+                                                        backgroundColor:
+                                                            "var(--primary)",
+                                                        color: "white",
+                                                    }}>
+                                                    {result.price.toLocaleString()}{" "}
+                                                    đ
+                                                </span>
+                                            </Box>
+                                        </ListItem>
+                                    ))}
+                                </Box>
+                            )}
+                        </SearchBox>
+                    </ClickAwayListener>
                     <Navbar>
                         <Box>
                             <StyledIconButton
@@ -309,96 +397,108 @@ const Header = () => {
                                 menu={menuUser}
                             />
                         </Box>
-                        <Box>
-                            <StyledIconButton
-                                size={matches ? "large" : "medium"}
-                                onClick={(e) =>
-                                    userState
-                                        ? handleClickIconCart(e)
-                                        : navigate("/login")
-                                }>
-                                <ShoppingCart />
-                            </StyledIconButton>
-                            <StyledMenu
-                                anchorEl={anchorElMenuCart}
-                                open={openMenuCart}
-                                onClose={handleCloseMenuCart}>
-                                {shopCarts.map((shopCart, index) => (
-                                    <Box key={index + 1}>
-                                        <Box
-                                            sx={{
-                                                padding: "4px 8px",
-                                                opacity: 0.8,
-                                                display: "flex",
-                                                gap: "16px",
-                                                alignItems: "center",
-                                                borderBottom: "1px solid #ccc",
-                                            }}>
-                                            <Link
-                                                to={`/shop/${shopCart.shop.id}`}>
-                                                <h3
-                                                    style={{
-                                                        fontWeight: 600,
-                                                        fontSize: "16px",
-                                                    }}>
-                                                    {shopCart.shop.name}
-                                                </h3>
-                                            </Link>
-                                        </Box>
-                                        {shopCart.details.map(
-                                            (
-                                                detail: CartDetailType,
-                                                index: number
-                                            ) => (
-                                                <CardCartDetail
-                                                    key={index + 1}
-                                                    detail={detail}
-                                                    setShopCarts={setShopCarts}
-                                                    checked={isCheckedCartDetails(
-                                                        shopCart,
-                                                        detail
-                                                    )}
-                                                    handleToggleChecked={() => {
-                                                        handleToggleCheckedCartDetails(
+                        <Hidden mdDown>
+                            <Box>
+                                <StyledIconButton
+                                    size={matches ? "large" : "medium"}
+                                    onClick={(e) =>
+                                        userState
+                                            ? handleClickIconCart(e)
+                                            : navigate("/login")
+                                    }>
+                                    <ShoppingCart />
+                                </StyledIconButton>
+                                <StyledMenu
+                                    anchorEl={anchorElMenuCart}
+                                    open={openMenuCart}
+                                    onClose={handleCloseMenuCart}>
+                                    {shopCarts.map((shopCart, index) => (
+                                        <Box key={index + 1}>
+                                            <Box
+                                                sx={{
+                                                    padding: "4px 8px",
+                                                    opacity: 0.8,
+                                                    display: "flex",
+                                                    gap: "16px",
+                                                    alignItems: "center",
+                                                    borderBottom:
+                                                        "1px solid #ccc",
+                                                }}>
+                                                <Link
+                                                    to={`/shop/${shopCart.shop.id}`}>
+                                                    <h3
+                                                        style={{
+                                                            fontWeight: 600,
+                                                            fontSize: "16px",
+                                                        }}>
+                                                        {shopCart.shop.name}
+                                                    </h3>
+                                                </Link>
+                                            </Box>
+                                            {shopCart.details.map(
+                                                (
+                                                    detail: CartDetailType,
+                                                    index: number
+                                                ) => (
+                                                    <CardCartDetail
+                                                        key={index + 1}
+                                                        detail={detail}
+                                                        setShopCarts={
+                                                            setShopCarts
+                                                        }
+                                                        checked={isCheckedCartDetails(
                                                             shopCart,
                                                             detail
-                                                        );
-                                                    }}
-                                                />
-                                            )
-                                        )}
-                                    </Box>
-                                ))}
+                                                        )}
+                                                        handleToggleChecked={() => {
+                                                            handleToggleCheckedCartDetails(
+                                                                shopCart,
+                                                                detail
+                                                            );
+                                                        }}
+                                                    />
+                                                )
+                                            )}
+                                        </Box>
+                                    ))}
 
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        gap: "8px",
-                                        padding: "0 8px",
-                                    }}>
-                                    <Button
-                                        size="small"
-                                        fullWidth
-                                        variant="contained"
-                                        onClick={() => {
-                                            const order = checkedCartDetails;
-                                            localStorage.setItem(
-                                                "order",
-                                                JSON.stringify(order)
-                                            );
-                                            navigate("/order");
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            gap: "8px",
+                                            padding: "0 8px",
                                         }}>
-                                        Order Now
-                                    </Button>
-                                    <Button
-                                        size="small"
-                                        fullWidth
-                                        variant="outlined">
-                                        Go to Cart
-                                    </Button>
-                                </Box>
-                            </StyledMenu>
-                        </Box>
+                                        <Button
+                                            size="small"
+                                            fullWidth
+                                            variant="contained"
+                                            onClick={() => {
+                                                const order = {
+                                                    orderDetails:
+                                                        checkedCartDetails,
+                                                    orderByCart: true,
+                                                };
+                                                localStorage.setItem(
+                                                    "order",
+                                                    JSON.stringify(order)
+                                                );
+                                                navigate("/order");
+                                            }}
+                                            disabled={
+                                                checkedCartDetails.length === 0
+                                            }>
+                                            Order Now
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            fullWidth
+                                            variant="outlined">
+                                            Go to Cart
+                                        </Button>
+                                    </Box>
+                                </StyledMenu>
+                            </Box>
+                        </Hidden>
                     </Navbar>
                 </StyledContainer>
             </StyledHeader>

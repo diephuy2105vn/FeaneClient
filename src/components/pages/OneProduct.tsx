@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../../axios";
 import { ProductType } from "../../constants/Product";
 import { Avatar, Box, Button, Container } from "@mui/material";
@@ -10,6 +10,7 @@ import useTextFormatting from "../../hooks/useFormatText";
 import { Chat, ShoppingCart, Store } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { getUser } from "../../redux/userReducer";
+import { ShopCartType } from "../../constants/Cart";
 
 const ProductContainer = styled(Container)`
     .Product_wrapper {
@@ -104,6 +105,7 @@ const OneProduct = () => {
     const [quantity, setQuantity] = useState<number>(1);
     const { convertPriceFormat } = useTextFormatting();
     const userState = useSelector(getUser);
+    const navigate = useNavigate();
     useEffect(() => {
         instance
             .get(`/public/product/${productId}`)
@@ -117,6 +119,26 @@ const OneProduct = () => {
                 quantity: quantity,
             });
     };
+    const handleClickBuyProduct = () => {
+        if (!product || !product.shop) return;
+
+        const order: { orderDetails: ShopCartType[]; orderByCart: boolean } = {
+            orderDetails: [],
+            orderByCart: false,
+        };
+        order.orderDetails.push({
+            shop: product.shop,
+            details: [
+                {
+                    product: product,
+                    quantity: quantity,
+                },
+            ],
+        });
+        localStorage.setItem("order", JSON.stringify(order));
+        navigate("/order");
+    };
+
     return product ? (
         <ProductContainer>
             <Box className="Product_wrapper">
@@ -184,7 +206,11 @@ const OneProduct = () => {
                             alignItems: "center",
                             gap: 2,
                         }}>
-                        <Button variant="contained">Buy product</Button>
+                        <Button
+                            variant="contained"
+                            onClick={handleClickBuyProduct}>
+                            Buy product
+                        </Button>
                         <Button
                             variant="outlined"
                             onClick={handleClickAddToCart}
