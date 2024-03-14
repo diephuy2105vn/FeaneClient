@@ -69,7 +69,6 @@ const ProductContainer = styled.div`
     overflow: hidden;
     &.Product-trending {
         grid-template-rows: auto;
-        grid-auto-rows: 0;
         @media (max-width: 900px) {
             grid-template-rows: auto auto;
         }
@@ -85,15 +84,14 @@ const ProductContainer = styled.div`
 const PromotionContainer = styled.div`
     flex: 1;
     display: grid;
-    grid-template-columns: auto auto auto auto;
-    grid-template-rows: auto auto;
-    grid-auto-rows: 0;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     overflow: hidden;
     @media (max-width: 900px) {
-        grid-template-columns: auto auto;
+        grid-template-columns: repeat(2, 1fr);
     }
     @media (max-width: 600px) {
-        grid-template-columns: auto;
+        grid-template-columns: repeat(1, 1fr);
     }
 `;
 
