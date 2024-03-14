@@ -3,7 +3,7 @@ import { Cookies } from "react-cookie";
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:8080/api/",
+    baseURL: "https://feaneserver-production.up.railway.app/api/",
 });
 
 instance.interceptors.request.use(
