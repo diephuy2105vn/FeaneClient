@@ -68,23 +68,22 @@ const ProductContainer = styled.div`
     grid-template-columns:
         calc(100% / 6) calc(100% / 6) calc(100% / 6)
         calc(100% / 6) calc(100% / 6) calc(100% / 6);
-    grid-template-rows: auto;
-    grid-auto-rows: 0;
+
     overflow: hidden;
     &.Product-trending {
         grid-template-rows: auto;
+        @media (max-width: 900px) {
+            grid-template-rows: auto auto;
+            grid-auto-rows: 0;
+        }
     }
     @media (max-width: 900px) {
         grid-template-columns:
             calc(100% / 4) calc(100% / 4)
             calc(100% / 4) calc(100% / 4);
-        grid-template-rows: auto auto;
-        grid-auto-rows: 0;
     }
     @media (max-width: 600px) {
         grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
-        grid-template-rows: auto auto;
-        grid-auto-rows: 0;
     }
 `;
 
