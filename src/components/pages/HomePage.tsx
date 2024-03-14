@@ -143,7 +143,7 @@ const SIZE_PAGE = 12;
 
 const HomePage = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
-    const [productTrends, setProductTrends] = useState<ProductType[]>([]);
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const shops = [
@@ -362,7 +362,7 @@ const HomePage = () => {
                     </span>
                 </Box>
                 <ProductContainer className="Product-trending">
-                    {productTrends.map((product) => (
+                    {products.map((product) => (
                         <CardProduct
                             component={Link}
                             to={`/product/${product.id}`}
