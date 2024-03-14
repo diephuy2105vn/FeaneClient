@@ -26,6 +26,7 @@ import { ShopContext } from "../../layout/OwnLayout";
 import { Search } from "@mui/icons-material";
 import useTextFormatting from "../../../hooks/useFormatText";
 import Title from "../../Title";
+import { current } from "@reduxjs/toolkit";
 
 const ProductContainer = styled.div`
     margin: 0;
@@ -78,7 +79,7 @@ const SIZE_PAGE = 12;
 const ShopAllProduct = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const { shopActive } = useContext(ShopContext);
-    const [curentPage, setCurentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const [selectChecked, setSelectChecked] = React.useState<{
         sort: string;
@@ -93,6 +94,7 @@ const ShopAllProduct = () => {
         checked: boolean
     ) => {
         const target = e.target as HTMLInputElement;
+        setCurrentPage(1);
         setSelectChecked((pre) => ({
             ...pre,
             sort: checked ? target.value : "",
@@ -103,6 +105,7 @@ const ShopAllProduct = () => {
         checked: boolean
     ) => {
         const target = e.target as HTMLInputElement;
+        setCurrentPage(1);
         setSelectChecked((pre) => ({
             ...pre,
             types: checked
@@ -114,16 +117,20 @@ const ShopAllProduct = () => {
     useEffect(() => {
         instance
             .get(
-                `/own/${shopActive?.name}/product/all?types=${selectChecked.types}&&sort=${selectChecked.sort}`
+                `/own/${shopActive?.name}/product/all?types=${selectChecked.types}&&sort=${selectChecked.sort}&&page=${currentPage}`
             )
             .then((res) => {
-                setTotalProduct(res.data.total);
-                setProducts(res.data.list);
+                if (currentPage === 1) {
+                    setTotalProduct(res.data.total);
+                    setProducts(res.data.list);
+                } else {
+                    setProducts((pre) => [...pre, ...res.data.list]);
+                }
             })
             .catch((err) => {
                 console.log(err);
             });
-    }, [selectChecked]);
+    }, [selectChecked, currentPage]);
 
     return (
         <StyledContainer>
@@ -348,8 +355,8 @@ const ShopAllProduct = () => {
                         />
                     ))}
                 </ProductContainer>
-                {curentPage * SIZE_PAGE < totalProduct && (
-                    <Button onClick={() => setCurentPage((pre) => ++pre)}>
+                {currentPage * SIZE_PAGE < totalProduct && (
+                    <Button onClick={() => setCurrentPage((pre) => ++pre)}>
                         View More
                     </Button>
                 )}

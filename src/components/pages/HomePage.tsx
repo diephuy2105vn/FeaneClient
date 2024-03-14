@@ -65,24 +65,20 @@ const SliderPromotion = styled(Slider)`
 
 const ProductContainer = styled.div`
     display: grid;
-    grid-template-columns:
-        calc(100% / 6) calc(100% / 6) calc(100% / 6)
-        calc(100% / 6) calc(100% / 6) calc(100% / 6);
+    grid-template-columns: repeat(6, 1fr);
     overflow: hidden;
     grid-gap: 8px;
     &.Product-trending {
         max-height: 444px;
     }
     @media (max-width: 900px) {
-        grid-template-columns:
-            calc(100% / 4) calc(100% / 4)
-            calc(100% / 4) calc(100% / 4);
+        grid-template-columns: repeat(4, 1fr);
         &.Product-trending {
             max-height: 360px;
         }
     }
     @media (max-width: 600px) {
-        grid-template-columns: calc(100% / 3) calc(100% / 3) calc(100% / 3);
+        grid-template-columns: repeat(3, 1fr);
         grid-auto-rows: minmax(100px, auto);
         &.Product-trending {
             max-height: 300px;
@@ -93,16 +89,16 @@ const ProductContainer = styled.div`
 const PromotionContainer = styled.div`
     flex: 1;
     display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-columns: repeat(4, 1fr);
     overflow: hidden;
     grid-gap: 8px;
     max-height: 444px;
     @media (max-width: 900px) {
-        grid-template-columns: 50% 50%;
+        grid-template-columns: repeat(2, 1fr);
         max-height: 360px;
     }
     @media (max-width: 600px) {
-        grid-template-columns: 100%;
+        grid-template-columns: repeat(1, 1fr);
         max-height: 300px;
     }
 `;
@@ -148,7 +144,7 @@ const SIZE_PAGE = 12;
 const HomePage = () => {
     const [products, setProducts] = useState<ProductType[]>([]);
     const [productTrends, setProductTrends] = useState<ProductType[]>([]);
-    const [curentPage, setCurentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalProduct, setTotalProduct] = useState<number>(0);
     const shops = [
         {
@@ -259,21 +255,15 @@ const HomePage = () => {
     ];
 
     useEffect(() => {
-        instance.get(`/public/product/all?page=${curentPage}`).then((res) => {
-            if (curentPage === 1) {
+        instance.get(`/public/product/all?page=${currentPage}`).then((res) => {
+            if (currentPage === 1) {
                 setTotalProduct(res.data.total);
-                return setProducts(res.data.list);
+                setProducts(res.data.list);
+            } else {
+                setProducts((pre) => [...pre, ...res.data.list]);
             }
-            setProducts((pre) => [...pre, res.data.list]);
         });
-        instance.get(`/public/product/all?size=12`).then((res) => {
-            if (curentPage === 1) {
-                setTotalProduct(res.data.total);
-                return setProductTrends(res.data.list);
-            }
-            setProducts((pre) => [...pre, res.data.list]);
-        });
-    }, []);
+    }, [currentPage]);
 
     return (
         <>
@@ -507,11 +497,11 @@ const HomePage = () => {
                             />
                         ))}
                     </ProductContainer>
-                    {curentPage * SIZE_PAGE < totalProduct && (
+                    {currentPage * SIZE_PAGE < totalProduct && (
                         <Button
                             fullWidth
                             size="large"
-                            onClick={() => setCurentPage((pre) => ++pre)}
+                            onClick={() => setCurrentPage((pre) => ++pre)}
                             startIcon={<ArrowDropDown />}>
                             Show More
                         </Button>
